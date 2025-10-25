@@ -209,4 +209,5 @@ This script is provided for educational purposes only. The authors are not respo
 Based on open-source activation techniques developed by the community.
 
 
-Homepage: Open Source Community
+We are Open Source Community
+
