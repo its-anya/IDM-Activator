@@ -4,9 +4,7 @@
 
 This script is designed to activate Internet Download Manager (IDM) by modifying registry entries and simulating legitimate usage patterns. It works by resetting trial periods and applying fake registration details to bypass IDM's activation requirements.
 
-<p align="center">
-  <img src="images/1.png" alt="IDM Activator Menu">
-</p>
+![IDM Activator Menu](images/1.png)
 
 ## ⚠️ Important Notice
 
@@ -40,6 +38,24 @@ The script performs the following operations:
    - `https://www.internetdownloadmanager.com/languages/indian.png`
 6. **Locks Registry Keys**: Prevents IDM from detecting the fake registration
 
+## New Features Added
+
+### Alternative File Replacement Method
+
+In addition to the registry-based activation, the script now includes an alternative activation method that replaces IDM's core executable files:
+
+1. **File Replacement**: Replaces [IDMan.exe](file:///c%3A/Users/rehan/Desktop/IDM_Activator/IDMan.exe) and [IDMGrHlp.exe](file:///c%3A/Users/rehan/Desktop/IDM_Activator/IDMGrHlp.exe) with modified versions
+2. **Automatic Backup**: Creates backups of original files before replacement
+3. **Registry Enhancement**: Applies additional registry settings from [registry.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/registry.bin) if available
+4. **Custom Registration**: Allows users to enter custom registration details
+
+### Version Checking and Download
+
+The script now includes features to check your IDM version and download the latest version:
+
+1. **Version Comparison**: Compares your installed version with the latest available
+2. **Direct Download**: Opens your browser directly to download the latest IDM version
+
 ## Usage Instructions
 
 ### Prerequisites
@@ -47,6 +63,13 @@ The script performs the following operations:
 - Windows 7/8/8.1/10/11
 - Internet Download Manager installed
 - Administrator privileges
+
+### Required Files for Alternative Method
+
+For the file replacement activation method, you need these files in the script directory:
+- [data.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/data.bin) (replaces [IDMan.exe](file:///c%3A/Users/rehan/Desktop/IDM_Activator/IDMan.exe))
+- [dataHlp.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/dataHlp.bin) (replaces [IDMGrHlp.exe](file:///c%3A/Users/rehan/Desktop/IDM_Activator/IDMGrHlp.exe))
+- [registry.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/registry.bin) (optional registry settings)
 
 ### How to Use
 
@@ -56,17 +79,20 @@ The script performs the following operations:
 
 2. **Main Menu Options**:
    ![Main Menu Options](images/2.png)
-   - `[1] Activate IDM`: Applies fake registration and simulates downloads
-   - `[2] Reset IDM Activation / Trial`: Clears registration data to reset trial
-   - `[3] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
-   - `[4] ReadMe`: Shows built-in documentation
-   - `[5] Homepage`: Opens project website
-   - `[6] Exit`: Closes the script
+   - `[1] Activate IDM (Registry Method)`: Applies fake registration using registry locking
+   - `[2] Activate IDM (File Replacement Method)`: Replaces IDM executables with modified versions
+   - `[3] Reset IDM Activation / Trial`: Clears registration data to reset trial
+   - `[4] Check IDM Version`: Compares installed version with latest available
+   - `[5] Download Latest IDM Version`: Opens browser to download latest version
+   - `[6] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
+   - `[7] ReadMe`: Shows built-in documentation
+   - `[8] Homepage`: Opens project website
+   - `[9] Exit`: Closes the script
 
 3. **Activation Process**:
-   - Select option 1 to activate
-   - Script will download files from IDM's website
-   - Registry keys will be modified
+   - Select option 1 for registry method or option 2 for file replacement method
+   - Script will download files from IDM's website (registry method)
+   - Registry keys will be modified or files will be replaced
    - IDM will appear as activated
 
 ### Command Line Options
@@ -120,6 +146,7 @@ The script is organized into several key functions:
 2. **Software Licensing**: Violates IDM's terms of service
 3. **Security Software Conflicts**: May be flagged by antivirus programs
 4. **Updates**: IDM updates may detect and remove modifications
+5. **File Replacement**: Replacing executable files may affect software functionality
 
 ### Mitigation Strategies
 
@@ -127,6 +154,7 @@ The script is organized into several key functions:
 2. **Compatibility**: Only use on supported Windows versions
 3. **Monitoring**: Check that IDM isn't running during activation
 4. **Firewall**: Use script's firewall toggle if needed
+5. **File Backup**: The file replacement method automatically creates backups
 
 ## Troubleshooting
 
@@ -141,13 +169,19 @@ The script is organized into several key functions:
 
 3. **Activation Fails**:
    ![Activation Process](images/3.png)
-   - Try resetting first (option 2)
+   - Try resetting first (option 3)
    - Disable firewall temporarily
    - Ensure internet connectivity
+   - Try the alternative file replacement method (option 2)
 
 4. **Fake Serial Error**:
    - Run reset option
    - Re-run activation
+
+5. **File Replacement Method Fails**:
+   - Ensure [data.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/data.bin) and [dataHlp.bin](file:///c%3A/Users/rehan/Desktop/IDM_Activator/dataHlp.bin) files are in the script directory
+   - Check that IDM is properly installed
+   - Verify you're running as administrator
 
 ### Advanced Troubleshooting
 
@@ -155,8 +189,12 @@ The script is organized into several key functions:
    - Delete `HKCU\Software\DownloadManager` keys
    - Clear `%appdata%\DMCache` folder
 
-2. **Firewall Issues**:
-   - Use option 3 to toggle Windows Firewall
+2. **Restoring Original Files** (for file replacement method):
+   - Rename `IDMan.exe.bak` to `IDMan.exe`
+   - Rename `IDMGrHlp.exe.bak` to `IDMGrHlp.exe`
+
+3. **Firewall Issues**:
+   - Use option 6 to toggle Windows Firewall
    - Check for conflicting security software
 
 ## Legal Disclaimer
@@ -166,6 +204,5 @@ This script is provided for educational purposes only. The authors are not respo
 ## Credits
 
 Based on open-source activation techniques developed by the community.
-
 
 Homepage: Open Source Community

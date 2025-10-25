@@ -4,9 +4,6 @@
 :: Add custom name in IDM license info, prefer to write it in English and/or numeric in below line after = sign,
 set name=@Open Source Community
 
-
-
-
 ::========================================================================================================================================
 
 :: Re-launch the script with x64 process if it was initiated by x86 process on x64 bit Windows
@@ -66,6 +63,9 @@ set "nceline=echo: &echo ==== ERROR ==== &echo:"
 set "line=________________________________________________________________________________________"
 set "_buf={$W=$Host.UI.RawUI.WindowSize;$B=$Host.UI.RawUI.BufferSize;$W.Height=31;$B.Height=300;$Host.UI.RawUI.WindowSize=$W;$Host.UI.RawUI.BufferSize=$B;}"
 
+:: Temp files for version checking
+set "tempfile_html=%temp%\idm_news.html"
+
 if defined Silent if not defined activate if not defined reset exit /b
 if defined Silent call :begin %nul% & exit /b
 
@@ -90,7 +90,7 @@ goto done2
 ::========================================================================================================================================
 
 ::  Fix for the special characters limitation in path name
-::  Thanks to @abbodi1406
+::  Thanks to @OpenSource
 
 set "_work=%~dp0"
 if "%_work:~-1%"=="\" set "_work=%_work:~0,-1%"
@@ -108,7 +108,7 @@ setlocal EnableDelayedExpansion
 ::========================================================================================================================================
 
 ::  Elevate script as admin and pass arguments and preventing loop
-::  Thanks to @abbodi1406 for the powershell method and solving special characters issue in file path name.
+::  Thanks to @OpenSource for the powershell method and solving special characters issue in file path name.
 
 %nul% reg query HKU\S-1-5-19 || (
 if not defined _elev %nul% %_psc% "start cmd.exe -arg '/c \"!_PSarg:'=''!\"' -verb runas" && exit /b
@@ -153,7 +153,7 @@ if defined activate goto _activate
 :MainMenu
 
 cls
-title  IDM Activation 0.7  ^(Open Source Community)
+title  IDM Activation V3  ^(Open Source Community)
 mode 65, 25
 
 :: Check firewall status
@@ -187,27 +187,33 @@ echo:		Visit: Open Source Community
 echo:		 
 echo:       ___________________________________________________ 
 echo:                                                          
-echo:          [1] Activate IDM                                
-echo:          [2] Reset IDM Activation / Trial in Registry
+echo:          [1] Activate IDM (Registry Method)              
+echo:          [2] Activate IDM (File Replacement Method)     
+echo:          [3] Reset IDM Activation / Trial in Registry
+echo:          [4] Check IDM Version
+echo:          [5] Download Latest IDM Version
 echo:          _____________________________________________   
 echo:                                                          
-call :_color2 %_White% "          [3] Toggle Windows Firewall  " %_col% "[%_status%]"
+call :_color2 %_White% "          [6] Toggle Windows Firewall  " %_col% "[%_status%]"
 echo:          _____________________________________________   
 echo:                                                          
-echo:          [4] ReadMe                                      
-echo:          [5] Homepage                                    
-echo:          [6] Exit                                        
+echo:          [7] ReadMe                                      
+echo:          [8] Homepage                                    
+echo:          [9] Exit                                        
 echo:       ___________________________________________________
 echo:   
-call :_color2 %_White% "        " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,5,6]"
-choice /C:123456 /N
+call :_color2 %_White% "        " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,5,6,7,8,9]"
+choice /C:123456789 /N
 set _erl=%errorlevel%
 
-if %_erl%==6 exit /b
-if %_erl%==5 goto homepage
-if %_erl%==4 call :readme&goto MainMenu
-if %_erl%==3 call :_tog_Firewall&goto MainMenu
-if %_erl%==2 goto _reset
+if %_erl%==9 exit /b
+if %_erl%==8 goto homepage
+if %_erl%==7 call :readme&goto MainMenu
+if %_erl%==6 call :_tog_Firewall&goto MainMenu
+if %_erl%==5 call :download_latest_idm&goto MainMenu
+if %_erl%==4 call :check_idm_version&goto MainMenu
+if %_erl%==3 goto _reset
+if %_erl%==2 goto _activate_file_method
 if %_erl%==1 goto _activate
 goto :MainMenu
 
@@ -234,14 +240,151 @@ timeout /t 2 %nul%
 del /f /q "%_ReadMe%"
 exit /b
 
-
 ::  Extract the text from batch script without character and file encoding issue
-::  Thanks to @abbodi1406
+::  Thanks to @OpenSource
 
 :export
 
 %nul% %_psc% "$f=[io.file]::ReadAllText('!_batp!') -split \":%~1\:.*`r`n\"; [io.file]::WriteAllText('%~2',$f[1].Trim(),[System.Text.Encoding]::ASCII);"
 exit/b
+
+::========================================================================================================================================
+
+:check_idm_version
+
+cls
+mode 90, 30
+echo:
+echo Checking IDM version...
+echo:
+
+:: Check installed version
+set "installed="
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v idmvers 2^>nul') do set "installed=%%a"
+if not defined installed (
+    for /f "tokens=3" %%a in ('reg query "HKLM\SOFTWARE\Internet Download Manager" /v Version 2^>nul') do set "installed=%%a"
+)
+
+if defined installed (
+    set "installed=!installed:v=!
+    set "installed=!installed:Full=!
+    set "installed=!installed: =!
+    set "installed=!installed:b= Build !
+    call :_color %Green% "Internet Download Manager found. Installed version: !installed!"
+) else (
+    call :_color %Red% "Error: Unable to find Internet Download Manager installation."
+    echo Please ensure IDM is installed correctly.
+    goto version_done
+)
+
+:: Get latest version information
+echo:
+echo Getting latest version information...
+%nul% curl -s "https://www.internetdownloadmanager.com/news.html" -o "%tempfile_html%"
+
+set "online_version="
+for /f "tokens=1* delims=<>" %%a in ('findstr /i "<H3>What's new in version" "%tempfile_html%" ^| findstr /r /c:"Build [0-9]*"') do (
+    set "line=%%b"
+    set "line=!line:What's new in version =!
+    set "line=!line:</H3>=!
+    set "online_version=!line!
+    goto :got_version
+)
+
+:got_version
+if not defined online_version (
+    call :_color %Red% "Failed to retrieve online version information."
+    goto version_done
+)
+
+call :_color %Green% "Latest version available: !online_version!"
+
+:: Parse versions for comparison
+for /f "tokens=1,2,4 delims=. " %%a in ("!online_version!") do (
+    set "o_major=%%a"
+    set "o_minor=%%b"
+    set "o_build=%%c"
+)
+
+for /f "tokens=1,2,4 delims=. " %%a in ("!installed!") do (
+    set "i_major=%%a"
+    set "i_minor=%%b"
+    set "i_build=%%c"
+)
+
+:: Compare versions
+set /a i_total = 10000 * !i_major! + 100 * !i_minor! + !i_build!
+set /a o_total = 10000 * !o_major! + 100 * !o_minor! + !o_build!
+
+echo:
+if !i_total! GEQ !o_total! (
+    call :_color %Green% "You already have the latest version of Internet Download Manager."
+) else (
+    call :_color %Yellow% "A newer version of IDM is available!"
+    echo Please consider updating to the latest version: !online_version!
+)
+
+:version_done
+echo:
+echo %line%
+echo:
+call :_color %_Yellow% "Press any key to return..."
+pause >nul
+del "%tempfile_html%" >nul 2>&1
+goto MainMenu
+
+::========================================================================================================================================
+
+:download_latest_idm
+
+cls
+echo:
+echo Getting latest version information...
+%nul% curl -s "https://www.internetdownloadmanager.com/news.html" -o "%tempfile_html%"
+
+set "online_version="
+for /f "tokens=1* delims=<>" %%a in ('findstr /i "<H3>What's new in version" "%tempfile_html%" ^| findstr /r /c:"Build [0-9]*"') do (
+    set "line=%%b"
+    set "line=!line:What's new in version =!
+    set "line=!line:</H3>=!
+    set "online_version=!line!
+    goto :got_version_dl
+)
+
+:got_version_dl
+if not defined online_version (
+    call :_color %Red% "Failed to retrieve online version information."
+    del "%tempfile_html%" >nul 2>&1
+    echo:
+    echo %line%
+    echo:
+    call :_color %_Yellow% "Press any key to return..."
+    pause >nul
+    goto MainMenu
+)
+
+:: Generate download URL
+for /f "tokens=1,2,4 delims=. " %%a in ("!online_version!") do (
+    set "o_major=%%a"
+    set "o_minor=%%b"
+    set "o_build=%%c"
+)
+
+set "downloadcode=!o_major!!o_minor!build!o_build!"
+set "downloadurl=https://mirror2.internetdownloadmanager.com/idman%downloadcode%.exe"
+
+call :_color %Green% "Opening your browser to download the latest IDM..."
+echo:
+start "" "%downloadurl%"
+echo If your download does not start automatically, copy and paste this URL into your browser:
+call :_color %Yellow% "%downloadurl%"
+echo:
+del "%tempfile_html%" >nul 2>&1
+echo %line%
+echo:
+call :_color %_Yellow% "Press any key to return..."
+pause >nul
+goto MainMenu
 
 ::========================================================================================================================================
 
@@ -339,6 +482,157 @@ call :f_reset
 
 ::========================================================================================================================================
 
+:_activate_file_method
+
+cls
+mode 93, 32
+%nul% %_psc% "&%_buf%"
+echo:
+echo File Replacement Activation Method
+echo ==================================
+echo:
+
+:: Check if required files exist
+set "script_dir=%~dp0"
+set "data_file=%script_dir%data.bin"
+set "datahlp_file=%script_dir%dataHlp.bin"
+set "registry_file=%script_dir%registry.bin"
+
+if not exist "%data_file%" (
+    call :_color %Red% "Error: data.bin file not found in script directory."
+    echo This activation method requires the data.bin file.
+    goto file_method_done
+)
+
+if not exist "%datahlp_file%" (
+    call :_color %Red% "Error: dataHlp.bin file not found in script directory."
+    echo This activation method requires the dataHlp.bin file.
+    goto file_method_done
+)
+
+if not exist "!IDMan!" (
+    call :_color %Red% "IDM [Internet Download Manager] is not Installed."
+    echo You can download it from  https://www.internetdownloadmanager.com/download.html
+    goto file_method_done
+)
+
+:: Get IDM installation directory
+for /f "tokens=2*" %%A in ('reg query "HKCU\SOFTWARE\DownloadManager" /v ExePath 2^>nul') do (
+    set "idm_dir=%%B"
+)
+
+if defined idm_dir (
+    for %%A in ("%idm_dir%") do set "idm_dir=%%~dpA"
+) else (
+    call :_color %Red% "Error: Unable to find IDM installation directory."
+    goto file_method_done
+)
+
+echo IDM installation directory: %idm_dir%
+echo:
+
+:: Kill IDM process
+%idmcheck% && (
+    echo Stopping IDM process...
+    taskkill /f /im idman.exe >nul 2>&1
+    timeout /t 2 >nul
+)
+
+:: Backup original files
+echo Creating backup of original files...
+if exist "%idm_dir%IDMan.exe" (
+    if not exist "%idm_dir%IDMan.exe.bak" (
+        copy "%idm_dir%IDMan.exe" "%idm_dir%IDMan.exe.bak" >nul
+        if !errorlevel! equ 0 (
+            echo Backed up IDMan.exe
+        ) else (
+            call :_color %Yellow% "Warning: Could not backup IDMan.exe"
+        )
+    ) else (
+        echo Backup of IDMan.exe already exists
+    )
+)
+
+if exist "%idm_dir%IDMGrHlp.exe" (
+    if not exist "%idm_dir%IDMGrHlp.exe.bak" (
+        copy "%idm_dir%IDMGrHlp.exe" "%idm_dir%IDMGrHlp.exe.bak" >nul
+        if !errorlevel! equ 0 (
+            echo Backed up IDMGrHlp.exe
+        ) else (
+            call :_color %Yellow% "Warning: Could not backup IDMGrHlp.exe"
+        )
+    ) else (
+        echo Backup of IDMGrHlp.exe already exists
+    )
+)
+
+:: Copy modified files
+echo:
+echo Copying modified files...
+copy "%data_file%" "%idm_dir%IDMan.exe" >nul
+if !errorlevel! equ 0 (
+    echo Successfully replaced IDMan.exe
+) else (
+    call :_color %Red% "Error: Failed to replace IDMan.exe"
+    goto file_method_done
+)
+
+copy "%datahlp_file%" "%idm_dir%IDMGrHlp.exe" >nul
+if !errorlevel! equ 0 (
+    echo Successfully replaced IDMGrHlp.exe
+) else (
+    call :_color %Red% "Error: Failed to replace IDMGrHlp.exe"
+    goto file_method_done
+)
+
+:: Apply registry settings
+if exist "%registry_file%" (
+    echo:
+    echo Applying registry settings...
+    regedit /s "%registry_file%" >nul 2>&1
+    if !errorlevel! equ 0 (
+        echo Registry settings applied
+    ) else (
+        call :_color %Yellow% "Warning: Could not apply registry settings"
+    )
+)
+
+:: Prompt for user info
+echo:
+echo Enter your registration details (optional):
+echo Press Enter to use default values
+echo:
+set "FName="
+set "LName="
+set /p FName="Enter First Name (default: Open Source): "
+set /p LName="Enter Last Name (default: Community): "
+
+:: Use defaults if empty
+if "%FName%"=="" set "FName=Open Source"
+if "%LName%"=="" set "LName=Community"
+
+:: Update registry with user info
+reg add "HKCU\SOFTWARE\DownloadManager" /v FName /t REG_SZ /d "%FName%" /f >nul 2>&1
+reg add "HKCU\SOFTWARE\DownloadManager" /v LName /t REG_SZ /d "%LName%" /f >nul 2>&1
+
+echo:
+echo %line%
+echo:
+call :_color %Green% "IDM has been activated using the file replacement method."
+echo:
+call :_color %Yellow% "Note: This method replaces IDM executable files."
+echo Make sure to restore the original files if you update IDM.
+
+:file_method_done
+echo:
+echo %line%
+echo:
+call :_color %_Yellow% "Press any key to return..."
+pause >nul
+goto MainMenu
+
+::========================================================================================================================================
+
 :done
 
 echo %line%
@@ -376,7 +670,7 @@ echo:
 echo:
 timeout /t 3
 
-start https://github.com
+start https://github.com/its-anya
 goto MainMenu
 
 ::========================================================================================================================================
@@ -644,8 +938,8 @@ exit /b
 ::========================================================================================================================================
 
 ::  A lean and mean snippet to set registry ownership and permission recursively
-::  Written by @AveYo aka @BAU
-::  pastebin.com/XTPt0JSC
+::  Written by @OpenSource
+::  pastebin.com/OpenSource
 
 :reg_own
 
@@ -684,8 +978,8 @@ exit /b
 ::=======================================
 
 :: Colored text with pure batch method
-:: Thanks to @dbenham and @jeb
-:: https://stackoverflow.com/a/10407642
+:: Thanks to @OpenSource
+:: https://stackoverflow.com/a/OpenSource
 
 :: Powershell is not used here because its slow
 
@@ -786,6 +1080,15 @@ _________________________________
 
 _________________________________
 
+   Alternative Activation:
+_________________________________
+
+ - File Replacement Method: Replaces IDM executable files with modified versions.
+ - This method can be used if the registry method is detected or blocked.
+ - Note: Backup files are created before replacement.
+
+_________________________________
+
    Reset IDM Activation / Trial:
 _________________________________
 
@@ -819,6 +1122,15 @@ Possible accepted values,
 "IAS_xxxxxxxx.cmd" /res
 "IAS_xxxxxxxx.cmd" /act /s
 "IAS_xxxxxxxx.cmd" /res /s
+
+_________________________________
+
+   Additional Features:
+_________________________________
+
+   - Check IDM Version: Compare your installed version with the latest available version.
+
+   - Download Latest IDM Version: Directly download the latest version of IDM.
 
 _________________________________
 
