@@ -2,6 +2,55 @@
 
 ## Getting Started
 
+### Installation
+
+#### Method 1: PowerShell (Recommended)
+
+Open PowerShell:
+- Right-click the Start menu and select Windows PowerShell or Windows Terminal
+- If prompted by User Account Control (UAC), click Yes to allow PowerShell to run with administrative privileges
+
+Run the following command in PowerShell to download and execute the activation script:
+```powershell
+irm https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IDM_Activator.cmd | iex
+```
+
+#### Method 2: PowerShell Installation Script
+
+Download and run the installation script:
+
+1. Download the [install.ps1](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/install.ps1) script
+2. Right-click on the downloaded file and select "Run with PowerShell"
+3. If prompted by User Account Control (UAC), click Yes
+
+##### Troubleshooting Execution Policy Errors
+
+If you encounter an execution policy error when running the script, you can temporarily allow scripts:
+
+**Option 1: Bypass execution policy for current process**
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+When prompted, type "A" for "Yes to All", then run:
+```powershell
+./install.ps1
+```
+
+**Option 2: Run from Command Prompt**
+```cmd
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+#### Method 3: Manual Download
+
+1. Download: Obtain the latest version of the tool from the [releases page](https://github.com/its-anya/IDM-Activator/releases/)
+2. Alternative direct link: [IDM_Activator.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/refs/heads/main/IDM_Activator.cmd)
+
+#### Method 4: Using Launcher Script
+
+1. Download the [IASL.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IASL.cmd) launcher script
+2. Right-click on the downloaded file and select "Run as administrator"
+
 ### Prerequisites
 - Windows 7/8/8.1/10/11
 - Internet Download Manager installed
