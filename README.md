@@ -4,10 +4,57 @@
 
 This script is designed to activate Internet Download Manager (IDM) by modifying registry entries and simulating legitimate usage patterns. It works by resetting trial periods and applying fake registration details to bypass IDM's activation requirements.
 
+**Version:** 4.0 (2025-10-26)
+
 <p align="center">
   <img src="images/1.png" alt="IDM Activator Menu" />
 </p>
 
+## Installation
+
+### Method 1: PowerShell
+
+Open PowerShell:
+- Right-click the Start menu and select Windows PowerShell or Windows Terminal
+- If prompted by User Account Control (UAC), click Yes to allow PowerShell to run with administrative privileges
+
+Run the following command in PowerShell to download and execute the activation script:
+
+```powershell
+irm https://raw.githubusercontent.com/its-anya/IDM-Activator/refs/heads/main/install.ps1 | iex
+```
+
+#### Troubleshooting Execution Policy Errors
+
+If you encounter an execution policy error when running the script, you can temporarily allow scripts:
+
+Option 1: Bypass execution policy for current process
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+When prompted, type "A" for "Yes to All", then re-run the script:
+
+```powershell
+irm https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IDM_Activator.cmd | iex
+```
+
+
+### Method 2: Manual Download
+
+1. Download: Obtain the latest version of the tool from the [releases page](https://github.com/its-anya/IDM-Activator/releases/)
+2. Alternative direct link: [IDM_Activator.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/refs/heads/main/IDM_Activator.cmd)
+
+### Method 3: Using Launcher Script
+
+1. Download the [IASL.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IASL.cmd) launcher script
+2. Right-click on the downloaded file and select "Run as administrator"
+
+### Method 4: PowerShell Installation Script
+
+1. Download the [install.ps1](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/install.ps1) script
+2. Right-click on the downloaded file and select "Run with PowerShell"
+3. If prompted by User Account Control (UAC), click Yes
 
 ## ⚠️ Important Notice
 
