@@ -47,7 +47,7 @@ irm https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IDM_Activator.
 
 ### Method 3: Using Launcher Script
 
-1. Download the [IASL.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IASL.cmd) launcher script
+1. Download the [IASL.cmd](https://raw.githubusercontent.com/its-anya/IDM-Activator/refs/heads/main/IASL.cmd) launcher script
 2. Right-click on the downloaded file and select "Run as administrator"
 
 ### Method 4: PowerShell Installation Script
@@ -258,4 +258,5 @@ Based on open-source activation techniques developed by the community.
 
 
 We are Open Source Community
+
 
