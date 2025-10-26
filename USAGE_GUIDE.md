@@ -23,35 +23,32 @@ This is the main activation function:
 - Downloads files from IDM's website to simulate usage
 - Locks registry keys to prevent detection
 
-**Process:**
-1. Checks if IDM is installed
-2. Verifies internet connectivity
-3. Kills any running IDM processes
-4. Clears existing registration data
-5. Applies fake registration information
-6. Downloads temporary files from IDM's website
-7. Locks registry keys
-8. Confirms successful activation
-
 ### Option 2: Reset IDM Activation / Trial in Registry
 Use this to reset the trial period or fix activation issues:
 - Completely removes registration data
 - Clears trial expiration information
 - Helpful for resolving "fake serial" errors
 
-### Option 3: Toggle Windows Firewall
+### Option 3: Check Activation Status
+Verifies if IDM is currently activated without performing activation:
+- Checks registry for registration information
+- Displays current activation status
+- Shows registration details if activated
+- Displays trial information if applicable
+
+### Option 4: Toggle Windows Firewall
 Enables or disables Windows Firewall:
 - Useful for troubleshooting activation issues
 - May help if previous activators created firewall rules
 - Can resolve connectivity problems
 
-### Option 4: ReadMe
+### Option 5: ReadMe
 Displays the built-in documentation from the script.
 
-### Option 5: Homepage
+### Option 6: Homepage
 Opens the project website in your default browser.
 
-### Option 6: Exit
+### Option 0: Exit
 Closes the script.
 
 ## Command Line Usage

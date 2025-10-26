@@ -153,7 +153,7 @@ if defined activate goto _activate
 :MainMenu
 
 cls
-title  IDM Activation V3  ^(Open Source Community)
+title  IDM Activation V4  ^(Open Source Community)
 mode 65, 25
 
 :: Check firewall status
@@ -192,24 +192,26 @@ echo:          [2] Activate IDM (File Replacement Method)
 echo:          [3] Reset IDM Activation / Trial in Registry
 echo:          [4] Check IDM Version
 echo:          [5] Download Latest IDM Version
+echo:          [6] Check Activation Status
 echo:          _____________________________________________   
 echo:                                                          
-call :_color2 %_White% "          [6] Toggle Windows Firewall  " %_col% "[%_status%]"
+call :_color2 %_White% "          [7] Toggle Windows Firewall  " %_col% "[%_status%]"
 echo:          _____________________________________________   
 echo:                                                          
-echo:          [7] ReadMe                                      
-echo:          [8] Homepage                                    
-echo:          [9] Exit                                        
+echo:          [8] ReadMe                                      
+echo:          [9] Homepage                                    
+echo:          [0] Exit                                        
 echo:       ___________________________________________________
 echo:   
-call :_color2 %_White% "        " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,5,6,7,8,9]"
-choice /C:123456789 /N
+call :_color2 %_White% "        " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,5,6,7,8,9,0]"
+choice /C:1234567890 /N
 set _erl=%errorlevel%
 
-if %_erl%==9 exit /b
-if %_erl%==8 goto homepage
-if %_erl%==7 call :readme&goto MainMenu
-if %_erl%==6 call :_tog_Firewall&goto MainMenu
+if %_erl%==10 exit /b
+if %_erl%==9 goto homepage
+if %_erl%==8 call :readme&goto MainMenu
+if %_erl%==7 call :_tog_Firewall&goto MainMenu
+if %_erl%==6 call :check_activation_status&goto MainMenu
 if %_erl%==5 call :download_latest_idm&goto MainMenu
 if %_erl%==4 call :check_idm_version&goto MainMenu
 if %_erl%==3 goto _reset
@@ -380,6 +382,88 @@ echo If your download does not start automatically, copy and paste this URL into
 call :_color %Yellow% "%downloadurl%"
 echo:
 del "%tempfile_html%" >nul 2>&1
+echo %line%
+echo:
+call :_color %_Yellow% "Press any key to return..."
+pause >nul
+goto MainMenu
+
+::========================================================================================================================================
+
+:check_activation_status
+
+cls
+mode 90, 30
+echo:
+echo Checking IDM Activation Status...
+echo:
+echo:
+
+:: Check if IDM is installed
+set "idm_installed="
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v ExePath 2^>nul') do set "idm_installed=%%a"
+
+if not defined idm_installed (
+    call :_color %Red% "Error: Internet Download Manager is not installed."
+    echo Please install IDM before checking activation status.
+    goto activation_status_done
+)
+
+:: Check for registration information
+set "is_activated=0"
+set "reg_name="
+set "reg_email="
+set "reg_serial="
+
+:: Check for FName (First Name)
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v FName 2^>nul') do set "reg_name=%%a"
+
+:: Check for Email
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v Email 2^>nul') do set "reg_email=%%a"
+
+:: Check for Serial
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v Serial 2^>nul') do set "reg_serial=%%a"
+
+:: Determine activation status
+if defined reg_name if defined reg_email if defined reg_serial (
+    if not "%reg_name%"=="" if not "%reg_email%"=="" if not "%reg_serial%"=="" (
+        set "is_activated=1"
+    )
+)
+
+if "%is_activated%"=="1" (
+    call :_color %Green% "IDM is currently activated."
+    echo:
+    echo Registration Details:
+    echo   Name: %reg_name%
+    echo   Email: %reg_email%
+    echo   Serial: %reg_serial%
+) else (
+    call :_color %Yellow% "IDM is not activated or is using trial version."
+    echo:
+    echo No valid registration information found in the registry.
+    echo IDM may be in trial mode or not activated.
+)
+
+:: Check trial status
+echo:
+echo Checking trial information...
+set "trial_days="
+set "last_check="
+
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v tvfrdt 2^>nul') do set "trial_days=%%a"
+for /f "tokens=3" %%a in ('reg query "HKCU\Software\DownloadManager" /v LastCheckQU 2^>nul') do set "last_check=%%a"
+
+if defined trial_days (
+    call :_color %Gray% "Trial period information found in registry."
+    echo   Trial days: %trial_days%
+    if defined last_check echo   Last check: %last_check%
+) else (
+    call :_color %Gray% "No trial information found in registry."
+)
+
+:activation_status_done
+echo:
 echo %line%
 echo:
 call :_color %_Yellow% "Press any key to return..."
@@ -874,7 +958,7 @@ for /f "skip=2 tokens=3" %%a in ('reg query %reg%\Version /ve 2^>nul') do echo %
 exit /b
 )
 
-for /f "skip=2 tokens=1" %%a in ('reg query %reg% 2^>nul') do echo %%a| findstr /i "MData Model scansk Therad" >nul && (
+for /f "skip=2 tokens=1" %%a in ('reg query %reg% 2^nul') do echo %%a| findstr /i "MData Model scansk Therad" >nul && (
 %_action%
 exit /b
 )
@@ -1131,6 +1215,8 @@ _________________________________
    - Check IDM Version: Compare your installed version with the latest available version.
 
    - Download Latest IDM Version: Directly download the latest version of IDM.
+   
+   - Check Activation Status: Verify if IDM is currently activated without performing activation.
 
 _________________________________
 

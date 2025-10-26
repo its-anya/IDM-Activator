@@ -87,10 +87,11 @@ For the file replacement activation method, you need these files in the script d
    - `[3] Reset IDM Activation / Trial`: Clears registration data to reset trial
    - `[4] Check IDM Version`: Compares installed version with latest available
    - `[5] Download Latest IDM Version`: Opens browser to download latest version
-   - `[6] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
-   - `[7] ReadMe`: Shows built-in documentation
-   - `[8] Homepage`: Opens project website
-   - `[9] Exit`: Closes the script
+   - `[6] Check Activation Status`: Verifies if IDM is currently activated without performing activation
+   - `[7] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
+   - `[8] ReadMe`: Shows built-in documentation
+   - `[9] Homepage`: Opens project website
+   - `[0] Exit`: Closes the script
 
 3. **Activation Process**:
    - Select option 1 for registry method or option 2 for file replacement method
