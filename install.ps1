@@ -28,8 +28,32 @@ foreach ($url in $urls) {
     try {
         $webclient = New-Object System.Net.WebClient
 
-        # Show simple progress (no async issues)
-        $webclient.DownloadFile($url, $output)
+        if ($url -match "\.zip" -or $url -match "/zip/") {
+            $zipPath = "$tempDir\IDM-Activator.zip"
+            $webclient.DownloadFile($url, $zipPath)
+            Expand-Archive -Path $zipPath -DestinationPath $tempDir -Force
+            $extractedBatch = Get-ChildItem -Path $tempDir -Filter "IDM_Activator.cmd" -Recurse | Select-Object -First 1
+            if ($extractedBatch) {
+                $output = $extractedBatch.FullName
+            } else {
+                throw "Batch file not found in ZIP"
+            }
+        } else {
+            $webclient.DownloadFile($url, $output)
+            $srcDir = "$tempDir\src"
+            if (!(Test-Path -Path $srcDir)) {
+                New-Item -ItemType Directory -Path $srcDir | Out-Null
+            }
+            $baseUrl = "https://raw.githubusercontent.com/its-anya/IDM-Activator/main/src"
+            try {
+                $webclient.DownloadFile("$baseUrl/data.bin", "$srcDir\data.bin")
+                $webclient.DownloadFile("$baseUrl/dataHlp.bin", "$srcDir\dataHlp.bin")
+                $webclient.DownloadFile("$baseUrl/registry.bin", "$srcDir\registry.bin")
+                $webclient.DownloadFile("$baseUrl/extensions.bin", "$srcDir\extensions.bin")
+            } catch {
+                Write-Host "Warning: Could not download src files. File replacement method may not work." -ForegroundColor Yellow
+            }
+        }
 
         Write-Host "Download successful!" -ForegroundColor Green
         $success = $true
