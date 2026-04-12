@@ -578,9 +578,9 @@ echo:
 
 :: Check if required files exist
 set "script_dir=%~dp0"
-set "data_file=%script_dir%data.bin"
-set "datahlp_file=%script_dir%dataHlp.bin"
-set "registry_file=%script_dir%registry.bin"
+set "data_file=%script_dir%src\data.bin"
+set "datahlp_file=%script_dir%src\dataHlp.bin"
+set "registry_file=%script_dir%src\registry.bin"
 
 if not exist "%data_file%" (
     call :_color %Red% "Error: data.bin file not found in script directory."
@@ -958,7 +958,7 @@ for /f "skip=2 tokens=3" %%a in ('reg query %reg%\Version /ve 2^>nul') do echo %
 exit /b
 )
 
-for /f "skip=2 tokens=1" %%a in ('reg query %reg% 2^nul') do echo %%a| findstr /i "MData Model scansk Therad" >nul && (
+for /f "skip=2 tokens=1" %%a in ('reg query %reg% 2^>nul') do echo %%a| findstr /i "MData Model scansk Therad" >nul && (
 %_action%
 exit /b
 )
