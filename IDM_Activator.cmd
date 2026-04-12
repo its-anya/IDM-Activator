@@ -153,7 +153,7 @@ if defined activate goto _activate
 :MainMenu
 
 cls
-title  IDM Activation V4  ^(Open Source Community)
+title  IDM Activation V5  ^(Open Source Community)
 mode 65, 25
 
 :: Check firewall status
