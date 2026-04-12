@@ -4,7 +4,7 @@
 
 This script is designed to activate Internet Download Manager (IDM) by modifying registry entries and simulating legitimate usage patterns. It works by resetting trial periods and applying fake registration details to bypass IDM's activation requirements.
 
-**Version:** 4.0 (2026-04-12)
+**Version:** 5.0 (2026-04-12)
 <!--
 <p align="center">
   <img src="images/1.png" alt="IDM Activator Menu" />
