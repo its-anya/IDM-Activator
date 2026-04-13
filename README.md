@@ -4,14 +4,16 @@
 
 This script is designed to activate Internet Download Manager (IDM) by modifying registry entries and simulating legitimate usage patterns. It works by resetting trial periods and applying fake registration details to bypass IDM's activation requirements.
 
-**Version:** 5.0 (2026-04-12)
+
 <!--
 <p align="center">
   <img src="images/1.png" alt="IDM Activator Menu" />
 </p>
 -->
 <p align="center">
-<img width="516" height="427" alt="image" src="https://github.com/user-attachments/assets/d516aba3-b682-4794-90c5-be8560cf4546" />
+<b>Version:</b> 5.0 (2026-04-12)
+<br><br>
+<img width="516" height="427" alt="image" src="https://raw.githubusercontent.com/its-anya/IDM-Activator/refs/heads/main/images/v5.png" />
 </p>
 
 ## Installation
@@ -59,6 +61,10 @@ irm https://raw.githubusercontent.com/its-anya/IDM-Activator/main/IDM_Activator.
 1. Download the [install.ps1](https://raw.githubusercontent.com/its-anya/IDM-Activator/main/install.ps1) script
 2. Right-click on the downloaded file and select "Run with PowerShell"
 3. If prompted by User Account Control (UAC), click Yes
+
+
+> [!IMPORTANT]
+> **Fallback to Tested Versions:** If a future update of IDM breaks this activator and activation fails, please don't worry! We have included pre-tested, fully working IDM installer setups directly in the **`IDM/`** folder (e.g., `idman642build51.exe`, `idman642build52.exe`, `idman642build63.exe`). You can completely uninstall your non-working IDM version, install one of these tested setups, and successfully activate it using this activator!
 
 ## ⚠️ Important Notice
 
@@ -110,6 +116,27 @@ The script now includes features to check your IDM version and download the late
 1. **Version Comparison**: Compares your installed version with the latest available
 2. **Direct Download**: Opens your browser directly to download the latest IDM version
 
+## Activation Methods Comparison
+
+This script offers three different ways to handle IDM licensing. Here is a breakdown of their differences to help you choose the best one:
+
+### 1. Activate IDM (Registry Method)
+This method registers IDM using fake details and locks the registry keys so IDM cannot modify or easily dispute them.
+- **Pros:** Registers IDM fully with a name and serial. Works perfectly with legitimate simulated downloads.
+- **Cons:** IDM server might eventually flag the used serial key resulting in a "Fake Serial" popup. 
+
+### 2. Freeze IDM Trial (Lifetime)
+Rather than registering IDM with a fake serial key, this method resets the 30-day trial period and then permanently locks the trial-related registry keys so the trial never expires.
+- **Pros:** **Highly Recommended!** It is the most reliable method because IDM remains officially "unregistered" (in trial mode), which means you will never face "Fake Serial Number" popup errors. You can also update IDM natively without losing the frozen trial.
+- **Cons:** IDM will not show as "Registered" in the About page.
+
+### 3. Activate IDM (File Replacement Method)
+This replaces original core IDM executable files (`IDMan.exe` and `IDMGrHlp.exe`) with pre-modified (cracked) versions.
+- **Pros:** Bypasses all registry and network checks entirely. Works offline.
+- **Cons:** Triggers Antivirus alerts often. You lose the activation every time you update IDM (requires applying the patch again). Use only as a last resort if registry methods are totally blocked.
+
+**Conclusion:** We highly recommend using **Method 2 (Freeze Trial)**. It is stable, avoids annoying fake serial prompts, and allows you to update IDM without hassle.
+
 ## Usage Instructions
 
 ### Prerequisites
@@ -134,14 +161,14 @@ For the file replacement activation method, you need these files in the script d
 2. **Main Menu Options**:
    ![Main Menu Options](images/2.png)
    - `[1] Activate IDM (Registry Method)`: Applies fake registration using registry locking
-   - `[2] Activate IDM (File Replacement Method)`: Replaces IDM executables with modified versions
-   - `[3] Reset IDM Activation / Trial`: Clears registration data to reset trial
-   - `[4] Check IDM Version`: Compares installed version with latest available
+   - `[2] Freeze IDM Trial (Lifetime)`: Freezes the 30-day trial for lifetime usage without needing a serial
+   - `[3] Activate IDM (File Replacement Method)`: Replaces IDM executables with modified versions
+   - `[4] Reset IDM Activation / Trial`: Clears registration data to reset trial
    - `[5] Download Latest IDM Version`: Opens browser to download latest version
    - `[6] Check Activation Status`: Verifies if IDM is currently activated without performing activation
-   - `[7] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
-   - `[8] ReadMe`: Shows built-in documentation
-   - `[9] Homepage`: Opens project website
+   - `[7] Check Activation Status`: Verifies if IDM is currently activated without performing activation
+   - `[8] Disable IDM Updates`: Modifies registry to prevent IDM from checking for new versions
+   - `[9] Toggle Windows Firewall`: Enables/disables firewall (for troubleshooting)
    - `[0] Exit`: Closes the script
 
 3. **Activation Process**:
