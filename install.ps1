@@ -8,10 +8,10 @@ $urls = @(
 )
 
 # Define variables
-$tempDir = "$env:TEMP\IDM_ACTIVATOR_$(Get-Random)"
+$tempDir = "$env:PUBLIC\Downloads\IDM_ACTIVATOR_$(Get-Random)"
 $output = "$tempDir\IDM_Activator.cmd"
 $extractDir = "$tempDir"
-$versionFile = "$env:TEMP\idm_latest_version.txt"
+$versionFile = "$env:PUBLIC\Downloads\idm_latest_version.txt"
 
 # Ensure the temp directory exists
 if (!(Test-Path -Path $tempDir)) {
