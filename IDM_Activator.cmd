@@ -252,7 +252,7 @@ echo:
 echo:       _______________________________________________________ 
 echo:                                                               
 echo:          [1] Activate IDM (Registry Method)                   
-echo:          [2] Freeze IDM Trial (Lifetime)                       
+echo:          [2] Freeze IDM Trial (Alternative Method)                       
 echo:          [3] Activate IDM (File Replacement Method)            
 echo:          [4] Reset IDM Activation / Trial                      
 echo:          [5] Check IDM Version                                 
