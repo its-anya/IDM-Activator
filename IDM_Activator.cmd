@@ -135,15 +135,7 @@ for /f "tokens=2*" %%a in ('reg query "HKCU\Software\DownloadManager" /v ExePath
 
 setlocal EnableDelayedExpansion
 
-::  Check if script is running from temp (e.g. directly from archive)
-echo "!_batf!" | find /i "!_ttemp!" %nul1% && (
-if /i not "!_work!"=="!_ttemp!" (
-%nceline%
-echo Script is launched from inside a temp/archive folder.
-echo Please extract the archive and run the script from the extracted folder.
-goto done2
-)
-)
+::  Removed check for temp/archive folder to allow install.ps1 execution
 
 ::========================================================================================================================================
 
